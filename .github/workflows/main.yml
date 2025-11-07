@@ -1,4 +1,4 @@
-name: Deploy to AWS Elastic Beanstalk
+name: Deploy Flask app to Elastic Beanstalk
 
 on:
   push:
@@ -13,9 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install EB CLI
+      - name: Install Python and EB CLI
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install awsebcli
 
       - name: Configure AWS credentials
@@ -27,5 +27,9 @@ jobs:
 
       - name: Deploy to Elastic Beanstalk
         run: |
-          # EB CLI now uses the committed .elasticbeanstalk/config.yml
-          eb deploy
+          # Initialize EB CLI for existing app (non-interactive)
+          eb init ${{ secrets.BEANSTALK_APP_NAME }} --platform python-3.9 --region ${{ secrets.AWS_REGION }} --quiet
+          # Use the existing environment
+          eb use ${{ secrets.BEANSTALK_ENV_NAME }}
+          # Deploy application
+          eb deploy --staged --quiet
