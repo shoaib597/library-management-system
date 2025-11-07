@@ -25,7 +25,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Initialize EB CLI
+        run: |
+          # Initialize EB CLI for the existing app
+          eb init my-app --platform python-3.9 --region ${{ secrets.AWS_REGION }}
+
+      - name: Set default environment
+        run: |
+          # Use your existing environment (replace with your environment name)
+          eb use Library-management-system
+
       - name: Deploy to Elastic Beanstalk
         run: |
-          eb init -p python-3.9 my-app --region ${{ secrets.AWS_REGION }}
           eb deploy
+
