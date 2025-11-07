@@ -1,7 +1,7 @@
 from flask import Flask, g, escape, session, redirect, render_template, request, jsonify, Response
 from Misc.functions import *
 
-application = Flask(__name__)
+app = Flask(__name__)
 app.secret_key = '#$ab9&^BB00_.'
 
 # Setting DAO Class
@@ -24,3 +24,4 @@ app.register_blueprint(user_view)
 app.register_blueprint(book_view)
 
 app.register_blueprint(admin_view)
+
