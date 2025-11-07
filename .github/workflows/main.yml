@@ -13,6 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install EB CLI
+        run: |
+          pip install --upgrade pip
+          pip install awsebcli
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -20,18 +25,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Zip application
-        run: |
-          zip -r app.zip . -x "*.git*"  # package code
-
       - name: Deploy to Elastic Beanstalk
         run: |
-          VERSION_LABEL="v-${GITHUB_SHA}"
-          aws elasticbeanstalk create-application-version \
-            --application-name ${{ secrets.BEANSTALK_APP_NAME }} \
-            --version-label $VERSION_LABEL \
-            --source-bundle S3Bucket="" --source-bundle S3Key="" \
-            || echo "Version may already exist"
-          aws elasticbeanstalk update-environment \
-            --environment-name ${{ secrets.BEANSTALK_ENV_NAME }} \
-            --version-label $VERSION_LABEL
+          eb init -p python-3.9 my-app --region ${{ secrets.AWS_REGION }}
+          eb deploy
